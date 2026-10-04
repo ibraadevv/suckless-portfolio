@@ -1,0 +1,30 @@
+---
+// Sin porcentajes: una puntuación propia es subjetiva y no informa.
+// Se agrupa por área para que el lector vea el perfil de un vistazo.
+const grupos = [
+	{ nombre: "Backend", items: ["PHP", "Laravel", "Java"] },
+	{ nombre: "Frontend", items: ["HTML", "CSS", "Tailwind", "JavaScript", "TypeScript", "React", "Astro"] },
+	{ nombre: "Sistemas", items: ["Linux/Bash", "Apache", "Nginx", "Tomcat", "Docker"] },
+];
+---
+
+<section id="tecnologias" class="panel" aria-labelledby="tecnologias-titulo">
+	<h2 id="tecnologias-titulo" class="panel-title">Tecnologías</h2>
+
+	<dl class="space-y-5">
+		{
+			grupos.map((g) => (
+				<div class="grid gap-1 sm:grid-cols-[7.5rem_1fr] sm:gap-x-6">
+					<dt class="font-semibold text-accent-2">{g.nombre}</dt>
+					<dd>
+						<ul class="flex flex-wrap gap-x-5 gap-y-1">
+							{g.items.map((t) => (
+								<li>{t}</li>
+							))}
+						</ul>
+					</dd>
+				</div>
+			))
+		}
+	</dl>
+</section>

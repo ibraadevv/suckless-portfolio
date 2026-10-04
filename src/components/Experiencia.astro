@@ -1,25 +1,37 @@
-<section class="flex justify-center">
+---
+const puestos = [
+	{
+		empresa: "I-Tertius Informática",
+		rol: "Becario Full Stack",
+		desde: { texto: "Febrero ’26", iso: "2026-02" },
+		hasta: { texto: "Junio ’26", iso: "2026-06" },
+	},
+	{
+		empresa: "Freelance",
+		rol: "Full Stack",
+		desde: { texto: "Junio ’26", iso: "2026-06" },
+		hasta: null, // puesto actual
+	},
+];
+---
 
-	<div class="flex flex-col border leading-relaxed w-[50vw] m-6 p-8 gap-y-8" > 
+<section id="experiencia" class="panel" aria-labelledby="experiencia-titulo">
+	<h2 id="experiencia-titulo" class="panel-title">Experiencia</h2>
 
-
-		<h2 class="text-green-300 ">Experiencia</h2>
-
-		<div class="flex justify-between">
-			<h4> I-Tertius Informatica - Becario Full Stack durante 6 meses </h4>
-			<a href="">www</a>
-		</div>
-
-		<div class="flex justify-between">
-			<h4> Freelance - Full Stack </h4>	
-			<a href="">www</a>
-		</div>
-	
-		<div class="flex justify-between">
-			<h4>Warrior Soul FightSchool - Web para gimnasio de artes marciales</h4>
-			<a href="">www</a>
-		</div>
-
-	</div>
-
+	<ul>
+		{
+			puestos.map((p) => (
+				<li class="grid gap-1 border-t border-line py-4 first:border-t-0 first:pt-0 last:pb-0 sm:grid-cols-[1fr_auto] sm:items-baseline sm:gap-x-6">
+					<div>
+						<h3>{p.empresa}</h3>
+						<p class="text-ink-muted">{p.rol}</p>
+					</div>
+					<p class="text-ink-muted">
+						<time datetime={p.desde.iso}>{p.desde.texto}</time> –{" "}
+						{p.hasta ? <time datetime={p.hasta.iso}>{p.hasta.texto}</time> : "Actualidad"}
+					</p>
+				</li>
+			))
+		}
+	</ul>
 </section>

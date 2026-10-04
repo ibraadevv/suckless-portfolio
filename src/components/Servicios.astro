@@ -1,0 +1,36 @@
+---
+// Los numerales romanos (I–IV) no codificaban ninguna secuencia: se eliminan.
+const servicios = [
+	{
+		titulo: "Desarrollo de aplicaciones web",
+		texto: "Desarrollo web a medida: el servicio freelance más habitual — páginas y aplicaciones con backend (tiendas online, gestores internos, webs corporativas con panel de administración, APIs).",
+	},
+	{
+		titulo: "Gestión de bases de datos",
+		texto: "Administración y diseño de bases de datos: modelado de BD para negocios que empiezan, optimización de consultas lentas, migraciones de datos, backups y mantenimiento de integridad.",
+	},
+	{
+		titulo: "Gestión de servidores de aplicaciones para despliegue web",
+		texto: "Servicios de despliegue y DevOps freelance: configurar y mantener Apache/Nginx/Tomcat/Docker, poner en producción aplicaciones web de clientes, gestión de hosting/VPS, CI/CD para proyectos pequeños.",
+	},
+	{
+		titulo: "Seguridad en sistemas, servicios y aplicaciones",
+		texto: "Consultoría de ciberseguridad básica: auditorías de seguridad para pequeños negocios, hardening de servidores y aplicaciones, configuración de copias de seguridad y políticas de acceso.",
+	},
+];
+---
+
+<section id="servicios" class="panel" aria-labelledby="servicios-titulo">
+	<h2 id="servicios-titulo" class="panel-title">Servicios</h2>
+
+	<dl>
+		{
+			servicios.map((s) => (
+				<div class="grid gap-2 border-t border-line py-5 first:border-t-0 first:pt-0 last:pb-0 md:grid-cols-[13rem_1fr] md:gap-x-6">
+					<dt class="font-semibold text-accent-2">{s.titulo}</dt>
+					<dd class="max-w-[68ch]">{s.texto}</dd>
+				</div>
+			))
+		}
+	</dl>
+</section>

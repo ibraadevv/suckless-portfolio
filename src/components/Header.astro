@@ -1,15 +1,116 @@
-<nav class="flex flex-row justify-center  " >
+---
+const enlaces = [
+	{ href: "#biografia", texto: "Biografía" },
+	{ href: "#tecnologias", texto: "Tecnologías" },
+	{ href: "#proyectos", texto: "Proyectos" },
+	{ href: "#experiencia", texto: "Experiencia" },
+	{ href: "#servicios", texto: "Servicios" },
+	{ href: "#contacto", texto: "Contacto" },
+];
+---
 
-	<div class="flex flex-row justify-around w-[50vw] border m-6 p-4">
+<!--
+	Sin fondo propio: el único elemento visible es la barra (<nav>), que es
+	opaca. El -top-3 compensa el pt-3, así que al quedar fija la barra toca
+	el borde superior y no deja hueco por el que se vea pasar el contenido.
+-->
+<header class="sticky -top-3 z-20 pt-3">
+	<nav aria-label="Principal" class="border border-line-strong bg-surface">
+		<ul
+			data-nav-lista
+			class="flex gap-px overflow-x-auto bg-line [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+		>
+			{
+				enlaces.map((e) => (
+					<li class="shrink-0 bg-surface md:flex-1">
+						<a href={e.href} class="nav-link whitespace-nowrap" data-nav>
+							{e.texto}
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</nav>
+</header>
 
-		<a href="/" class="hover:text-green-300"> Inicio </a> 
+<script>
+	const nav = document.querySelector<HTMLElement>("nav[aria-label='Principal']")!;
+	const lista = nav.querySelector<HTMLElement>("[data-nav-lista]")!;
+	const enlaces = Array.from(nav.querySelectorAll<HTMLAnchorElement>("[data-nav]"));
+	const secciones = enlaces
+		.map((a) => document.getElementById(a.hash.slice(1)))
+		.filter((s): s is HTMLElement => s !== null);
 
-		<div class="flex gap-[2vw] ">
-			<a href="/#biografia" class="hover:text-green-300" >Biografia</a>		
-			<a href="/#contacto" class="hover:text-green-300">Contacto</a>		
-			<a href="/#proyectos" class="hover:text-green-300">Proyectos</a>
-		</div>
+	let activo = "";
+	let bloqueado = false; // mientras dura el desplazamiento provocado por un clic
+	let temporizador: number | undefined;
 
-	</div>
+	const marcar = (id: string) => {
+		if (id === activo) return;
+		activo = id;
+		for (const a of enlaces) {
+			if (a.hash.slice(1) === id) {
+				a.setAttribute("aria-current", "location");
+				// En móvil la barra se desplaza sola para mostrar el enlace activo,
+				// sin mover la página (por eso se toca lista.scrollLeft, no scrollIntoView).
+				const izq = a.offsetLeft - (lista.clientWidth - a.offsetWidth) / 2;
+				lista.scrollTo({ left: izq, behavior: "smooth" });
+			} else {
+				a.removeAttribute("aria-current");
+			}
+		}
+	};
 
-</nav>
+	// Activa = la última sección cuyo borde superior ya ha pasado la línea
+	// de referencia. La línea sale del mismo scroll-padding-top que usan los
+	// enlaces (+ 8 px de tolerancia), así una sección a la que se acaba de
+	// saltar siempre cuenta como alcanzada. Al llegar al final de la página
+	// se activa siempre la última, aunque sea corta y no alcance esa línea.
+	const calcular = () => {
+		if (bloqueado) return;
+		const padding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+		const linea = padding + 8;
+		const alFinal = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+		let id = secciones[0].id;
+		if (alFinal) {
+			id = secciones[secciones.length - 1].id;
+		} else {
+			for (const s of secciones) if (s.getBoundingClientRect().top <= linea) id = s.id;
+		}
+		marcar(id);
+	};
+
+	let pendiente = false;
+	const alScroll = () => {
+		if (pendiente) return;
+		pendiente = true;
+		requestAnimationFrame(() => {
+			pendiente = false;
+			calcular();
+		});
+	};
+
+	// Un clic marca el destino al instante y suspende el cálculo hasta que
+	// termina el desplazamiento; así no parpadean las secciones intermedias.
+	for (const a of enlaces) {
+		a.addEventListener("click", () => {
+			bloqueado = true;
+			marcar(a.hash.slice(1));
+			clearTimeout(temporizador);
+			temporizador = window.setTimeout(() => {
+				bloqueado = false;
+				calcular();
+			}, 900);
+		});
+	}
+	window.addEventListener("scrollend", () => {
+		if (!bloqueado) return;
+		clearTimeout(temporizador);
+		bloqueado = false;
+		calcular();
+	});
+
+	window.addEventListener("scroll", alScroll, { passive: true });
+	window.addEventListener("resize", alScroll, { passive: true });
+	calcular();
+</script>

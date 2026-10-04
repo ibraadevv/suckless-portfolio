@@ -1,1 +1,274 @@
 @import "tailwindcss";
+
+/* ──────────────────────────────────────────────────────────────
+   Fuentes
+   - Big Blue Term 437 (bitmap, subconjunto de 3 KB): SOLO titulares.
+     Es la seña de identidad "terminal", pero cansa en párrafos.
+   - JetBrains Mono (variable): todo el texto corrido. Diseñada para
+     leer código durante horas, con altura-x grande y buena métrica.
+   ────────────────────────────────────────────────────────────── */
+@font-face {
+	font-family: "Big Blue";
+	src: url("../assets/fonts/BigBlueTerm437-subset.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "JetBrains Mono";
+	src: url("../assets/fonts/JetBrainsMono-latin-wght.woff2") format("woff2");
+	font-weight: 100 800;
+	font-style: normal;
+	font-display: swap;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Tokens
+   Contrastes calculados sobre --color-surface (WCAG 2.1):
+     ink        15.5:1   muted      8.5:1   accent    12.9:1
+     accent-2    9.6:1   on-accent sobre accent 13.6:1
+   line-strong (bordes de campos) 4.2:1 sobre surface-2 (mín. 3:1).
+   ────────────────────────────────────────────────────────────── */
+@theme {
+	--color-bg: #0b0f0d;
+	--color-surface: #111714;
+	--color-surface-2: #18201b;
+	--color-line: #34443a;
+	--color-line-strong: #6f8577;
+
+	--color-ink: #e8efe9;
+	--color-ink-muted: #a7b5ac;
+
+	--color-accent: #86efac; /* acción / enlaces / estado activo */
+	--color-accent-2: #fca5a5; /* subtítulos y etiquetas de grupo */
+	--color-on-accent: #06120a;
+
+	--font-display: "Big Blue", "JetBrains Mono", ui-monospace, monospace;
+	--font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo,
+		Consolas, monospace;
+
+	--breakpoint-sm: 40rem; /* 640 */
+	--breakpoint-md: 48rem; /* 768 */
+	--breakpoint-lg: 64rem; /* 1024 */
+	--breakpoint-xl: 80rem; /* 1280: columna a la izquierda y planeta en el margen derecho */
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Base
+   ────────────────────────────────────────────────────────────── */
+@layer base {
+	html {
+		color-scheme: dark;
+		scroll-behavior: smooth;
+		scroll-padding-top: 4.5rem; /* barra fija (46 px) + aire */
+		-webkit-text-size-adjust: 100%;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
+	}
+
+	body {
+		@apply bg-bg font-mono text-ink;
+		font-size: 1rem;
+		line-height: 1.7;
+	}
+
+	h1,
+	h2 {
+		@apply font-display font-normal;
+		line-height: 1.25;
+		letter-spacing: 0.01em;
+	}
+
+	h3 {
+		@apply font-semibold;
+		line-height: 1.4;
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 3px;
+	}
+
+	::selection {
+		background: var(--color-accent);
+		color: var(--color-on-accent);
+	}
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Componentes
+   ────────────────────────────────────────────────────────────── */
+@layer components {
+	/* Columna de contenido: siempre centrada. El planeta vive en una capa
+	   fija detrás, así que nunca altera la maquetación. */
+	.shell {
+		@apply mx-auto w-full px-4;
+		max-width: 46rem;
+	}
+
+	/* Capa decorativa fija, siempre detrás y fuera del flujo */
+	.backdrop {
+		position: fixed;
+		inset: 0;
+		z-index: -1;
+		overflow: hidden;
+		background: var(--color-bg);
+		pointer-events: none;
+	}
+
+	.backdrop img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: 50% 40%;
+		opacity: 0.55;
+	}
+
+	/* ≥ 1280 px: el planeta se corre a la derecha para que quede en el
+	   margen y no detrás de la columna centrada. */
+	@media (min-width: 80rem) {
+		.backdrop img {
+			position: absolute;
+			top: 0;
+			right: -16vw;
+			width: 116vw;
+			max-width: none;
+			object-position: 85% 50%;
+			opacity: 1;
+		}
+	}
+
+	/* Panel: un único tratamiento para todas las secciones.
+	   Fondo opaco = el contraste no depende de lo que haya detrás. */
+	.panel {
+		@apply border border-line bg-surface p-5 sm:p-8;
+	}
+
+	.panel-title {
+		@apply mb-6 text-2xl text-accent;
+	}
+
+	.panel-title::before {
+		content: "$ " / "";
+		color: var(--color-ink-muted);
+	}
+
+	/* Enlaces */
+	.link {
+		@apply text-accent underline underline-offset-4;
+		text-decoration-thickness: 1px;
+	}
+
+	.link:hover {
+		@apply bg-accent text-on-accent;
+		text-decoration-thickness: 1px;
+	}
+
+	/* Botones: objetivo táctil mínimo de 44 px */
+	.btn-primary,
+	.btn-outline {
+		@apply inline-flex min-h-11 items-center justify-center border px-5 py-2 font-semibold;
+		cursor: pointer;
+	}
+
+	.btn-primary {
+		@apply border-accent bg-accent text-on-accent;
+	}
+
+	.btn-primary:hover {
+		@apply bg-transparent text-accent;
+	}
+
+	.btn-outline {
+		@apply border-line-strong text-ink;
+	}
+
+	.btn-outline:hover {
+		@apply border-accent bg-accent text-on-accent;
+	}
+
+	/* Navegación */
+	.nav-link {
+		@apply flex min-h-11 items-center justify-center px-4 text-sm text-ink;
+	}
+
+	.nav-link:hover {
+		@apply bg-surface-2 text-accent;
+	}
+
+	.nav-link[aria-current] {
+		@apply bg-accent font-semibold text-on-accent;
+	}
+
+	/* Formulario */
+	.legend {
+		@apply mb-3 font-semibold text-accent-2;
+		padding: 0;
+	}
+
+	.label {
+		@apply mb-1 block text-sm text-ink-muted;
+	}
+
+	.field {
+		@apply block w-full rounded-none border border-line-strong bg-surface-2 px-3 py-2.5 text-ink placeholder:text-ink-muted;
+		font-size: 1rem; /* 16 px: iOS no hace zoom al enfocar */
+		line-height: 1.5;
+	}
+
+	.field:hover {
+		@apply border-ink-muted;
+	}
+
+	.field:focus {
+		@apply border-accent;
+	}
+
+	/* Opciones de radio: el estado se ve por forma, no solo por color */
+	.chip {
+		display: block;
+		max-width: 100%;
+	}
+
+	.chip-face {
+		@apply flex min-h-11 cursor-pointer items-center gap-2 border border-line-strong bg-surface-2 px-3 py-2 text-sm text-ink;
+	}
+
+	.chip-face::before {
+		content: "( )" / "";
+		color: var(--color-ink-muted);
+		white-space: pre;
+	}
+
+	.chip-face:hover {
+		@apply border-accent;
+	}
+
+	.chip input:checked + .chip-face {
+		@apply border-accent bg-accent font-semibold text-on-accent;
+	}
+
+	.chip input:checked + .chip-face::before {
+		content: "(•)" / "";
+		color: var(--color-on-accent);
+	}
+
+	.chip input:focus-visible + .chip-face {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 3px;
+	}
+
+	/* Enlace "saltar al contenido" */
+	.skip-link {
+		@apply absolute left-4 top-2 z-50 -translate-y-20 bg-accent px-4 py-2 font-semibold text-on-accent;
+	}
+
+	.skip-link:focus {
+		@apply translate-y-0;
+	}
+}

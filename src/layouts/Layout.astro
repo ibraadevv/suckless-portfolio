@@ -1,53 +1,54 @@
 ---
 import "../styles/global.css";
 
-export interface Props {
+// Tres versiones del mismo fondo (WebP):
+//  - movil: recorte vertical 828×1472 centrado en el planeta
+//  - 1920 / 2560: desde 1280 px (1080p y pantallas densas / 1440p)
+import movil from "../assets/fondo-sm.png";
+import escritorio1920 from "../assets/fondo-md.png";
+import escritorio2560 from "../assets/fondo.png";
 
+export interface Props {
 	title: string;
 	description: string;
-
 }
 
-const {
-
-	title,
-	description,
-
-} = Astro.props;
-
+const { title, description } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="es">
 	<head>
 		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#0b0f0d" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<link rel="icon" href="/favicon.ico" sizes="any" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<meta name="description" content={description} />
-
 	</head>
 	<body>
+		<a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+		<div class="backdrop" aria-hidden="true">
+			<picture>
+				<source
+					media="(min-width: 80rem)"
+					srcset={`${escritorio1920.src} 1920w, ${escritorio2560.src} 2560w`}
+					sizes="100vw"
+				/>
+				<img
+					src={movil.src}
+					width={movil.width}
+					height={movil.height}
+					alt=""
+					decoding="async"
+				/>
+			</picture>
+		</div>
+
 		<slot />
 	</body>
 </html>
-
-<style>
-	@font-face {
-		font-family: "Big Blue";
-		src: url("../assets/fonts/BigBlueTerm437NerdFontMono-Regular.ttf") format("truetype");
-		font-weight: normal;
-		font-style: normal;
-		font-display: swap;
-	}
-
-	body {
-		font-family: "Big Blue", monospace;
-		background-color: #111111;
-		color: #ffffff;
-	}
-
-</style>
-

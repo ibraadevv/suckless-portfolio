@@ -1,20 +1,27 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import fondo from '../assets/fondo.jpg';
-import Header from '../components/Header.astro';
-import Hero from '../components/Hero.astro';
-import Tecnologias from '../components/Tecnologias.astro';
-import Proyectos from '../components/Proyectos.astro';
-import Experiencia from '../components/Experiencia.astro';
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import Tecnologias from "../components/Tecnologias.astro";
+import Proyectos from "../components/Proyectos.astro";
+import Experiencia from "../components/Experiencia.astro";
+import Servicios from "../components/Servicios.astro";
+import Contacto from "../components/Contacto.astro";
 ---
 
-<Layout title=" Mi portfolio | Ibrahim Thiam Jiménez "
-	description="Soy Ibra, desarrollador web Full Stack.">
-	<div class=" bg-[url(../assets/fondo.jpg)] bg-contain h-[100vh] w-[100vw]" >  
+<Layout
+	title="Mi portfolio | Ibrahim Thiam Jiménez"
+	description="Soy Ibra, desarrollador web Full Stack y SysAdmin."
+>
+	<div class="shell">
 		<Header />
-		<Hero />
-		<Tecnologias />
-		<Proyectos />
-		<Experiencia />
-	</div> 
+		<main id="contenido" class="flex flex-col gap-6 pb-16 pt-6">
+			<Hero />
+			<Tecnologias />
+			<Proyectos />
+			<Experiencia />
+			<Servicios />
+			<Contacto />
+		</main>
+	</div>
 </Layout>
