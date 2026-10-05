@@ -6,9 +6,16 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-  vite: {
-      plugins: [tailwindcss()],
+	vite: {
+		plugins: [tailwindcss()],
 	},
 
-  adapter: cloudflare(),
+	adapter: cloudflare(),
+
+	env: {
+		schema: {
+			RESEND_API_KEY: envField.string({ context: 'server', access: 'secret' }),
+			CONTACT_TO_EMAIL: envField.string({ context: 'server', access: 'secret' }),
+		},
+	},
 });

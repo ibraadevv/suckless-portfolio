@@ -1,5 +1,6 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
+import { RESEND_API_KEY, CONTACT_TO_EMAIL } from 'astro:env/server';
 import { Resend } from 'resend';
 
 const esc = (s: string) =>
@@ -19,23 +20,11 @@ export const server = {
 			presupuesto: z.string().optional(),
 		}),
 		handler: async (d) => {
-
-			const apiKey = import.meta.env.RESEND_API_KEY;
-			const to = import.meta.env.CONTACT_TO_EMAIL;
-
-			if (!apiKey || !to) {
-				console.error('Faltan RESEND_API_KEY o CONTACT_TO_EMAIL');
-				throw new ActionError({
-					code: 'INTERNAL_SERVER_ERROR',
-					message: 'Configuración del servidor incompleta.',
-				});
-			}
-
-			const resend = new Resend(apiKey);
+			const resend = new Resend(RESEND_API_KEY);
 
 			const { error } = await resend.emails.send({
 				from: 'Web <contacto@ibrathiam.dev>',
-				to: [to],
+				to: [CONTACT_TO_EMAIL],
 				replyTo: d.email,
 				subject: `Nuevo contacto: ${d.proyecto}`,
 				html: `
