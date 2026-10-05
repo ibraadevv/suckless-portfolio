@@ -1,4 +1,8 @@
 ---
+export const prerender = false;
+import { actions } from "astro:actions";
+
+const result = Astro.getActionResult(actions.contacto);
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
 import Hero from "../components/Hero.astro";
